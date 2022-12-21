@@ -9,7 +9,7 @@ namespace TogiSoft.AtlasDataBase.ArchiveWell.Perspective.Quadrilateral
     /// Базовый класс для фильтров, которые могут создавать новое изображение
     /// другого размера в виде результат обработки изображения.
     /// </summary>
-    internal abstract class BaseTransformationFilter : IFilter, IFilterInformation
+    internal abstract class BaseTransformationFilter
     {
         /// <summary>
         /// Формат словаря смещений
