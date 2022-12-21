@@ -1,5 +1,6 @@
 using System.Collections.Generic;
 using System.Drawing;
+using TogiSoft.MathExtension;
 
 namespace TogiSoft.AtlasDataBase.ArchiveWell.Perspective.Quadrilateral
 {
@@ -9,7 +10,7 @@ namespace TogiSoft.AtlasDataBase.ArchiveWell.Perspective.Quadrilateral
     internal static class QuadTransformationCalcs
     {
         /// <summary>
-        /// Степень точности
+        /// Эпсилон-погрешность
         /// </summary>
         private const double epsilon = 1e-13;
 
@@ -21,16 +22,11 @@ namespace TogiSoft.AtlasDataBase.ArchiveWell.Perspective.Quadrilateral
         /// <returns>Вычисленная матрица</returns>
         public static double[,] MapQuadToQuad(List<Point> input, List<Point> output)
         {
-            var squareToInpit = MapSquareToQuad(input);
+            var squareToInpit = AdjugateMatrix(MapSquareToQuad(input));
 
             var squareToOutput = MapSquareToQuad(output);
 
-            if (squareToOutput == null)
-            {
-                return null;
-            }
-
-            return MultiplyMatrix(squareToOutput, AdjugateMatrix(squareToInpit));
+            return LinearAlgebra.MatrixComposition(squareToOutput, squareToInpit);
         }
 
         /// <summary>
@@ -44,29 +40,6 @@ namespace TogiSoft.AtlasDataBase.ArchiveWell.Perspective.Quadrilateral
         private static double Det2(double a, double b, double c, double d)
         {
             return (a * d) - (b * c);
-        }
-
-        /// <summary>
-        /// Умножить две матрицы 3x3
-        /// </summary>
-        /// <param name="firstMatrix">Первая матрица</param>
-        /// <param name="secondMatrix">Вторая матрица</param>
-        /// <returns>Умноженная матрица</returns>
-        private static double[,] MultiplyMatrix(double[,] firstMatrix, double[,] secondMatrix)
-        {
-            var multipliedMatrix = new double[3, 3];
-
-            multipliedMatrix[0, 0] = (firstMatrix[0, 0] * secondMatrix[0, 0]) + (firstMatrix[0, 1] * secondMatrix[1, 0]) + (firstMatrix[0, 2] * secondMatrix[2, 0]);
-            multipliedMatrix[0, 1] = (firstMatrix[0, 0] * secondMatrix[0, 1]) + (firstMatrix[0, 1] * secondMatrix[1, 1]) + (firstMatrix[0, 2] * secondMatrix[2, 1]);
-            multipliedMatrix[0, 2] = (firstMatrix[0, 0] * secondMatrix[0, 2]) + (firstMatrix[0, 1] * secondMatrix[1, 2]) + (firstMatrix[0, 2] * secondMatrix[2, 2]);
-            multipliedMatrix[1, 0] = (firstMatrix[1, 0] * secondMatrix[0, 0]) + (firstMatrix[1, 1] * secondMatrix[1, 0]) + (firstMatrix[1, 2] * secondMatrix[2, 0]);
-            multipliedMatrix[1, 1] = (firstMatrix[1, 0] * secondMatrix[0, 1]) + (firstMatrix[1, 1] * secondMatrix[1, 1]) + (firstMatrix[1, 2] * secondMatrix[2, 1]);
-            multipliedMatrix[1, 2] = (firstMatrix[1, 0] * secondMatrix[0, 2]) + (firstMatrix[1, 1] * secondMatrix[1, 2]) + (firstMatrix[1, 2] * secondMatrix[2, 2]);
-            multipliedMatrix[2, 0] = (firstMatrix[2, 0] * secondMatrix[0, 0]) + (firstMatrix[2, 1] * secondMatrix[1, 0]) + (firstMatrix[2, 2] * secondMatrix[2, 0]);
-            multipliedMatrix[2, 1] = (firstMatrix[2, 0] * secondMatrix[0, 1]) + (firstMatrix[2, 1] * secondMatrix[1, 1]) + (firstMatrix[2, 2] * secondMatrix[2, 1]);
-            multipliedMatrix[2, 2] = (firstMatrix[2, 0] * secondMatrix[0, 2]) + (firstMatrix[2, 1] * secondMatrix[1, 2]) + (firstMatrix[2, 2] * secondMatrix[2, 2]);
-
-            return multipliedMatrix;
         }
 
         /// <summary>
